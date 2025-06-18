@@ -18,6 +18,10 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Install dependencies
+        run: bundle install
+        working-directory: ceap-api
+
       - name: Scan for Rails security vulnerabilities with Brakeman
         working-directory: ceap-api
         run: bin/brakeman --no-pager
@@ -33,6 +37,10 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+        working-directory: ceap-api
 
       - name: Lint Rails code with RuboCop
         working-directory: ceap-api
