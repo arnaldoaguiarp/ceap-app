@@ -1,0 +1,61 @@
+## Configurações Gerais para o Projeto Monorepo
+
+# Arquivos de ambiente (não versionar, exceto templates)
+.env*
+!.env*.erb
+
+# Arquivos temporários do sistema e do editor
+.DS_Store
+*~
+*.swp
+*.swo
+*:Zone.Identifier
+
+## Regras Específicas para o Backend (ceap-api)
+
+# Gemas e bundler
+ceap-api/vendor/bundle/
+ceap-api/.bundle/
+
+# Logs
+ceap-api/log/*
+!ceap-api/log/.keep
+
+# Diretórios temporários e cache
+ceap-api/tmp/*
+!ceap-api/tmp/.keep
+ceap-api/tmp/pids/*
+!ceap-api/tmp/pids/
+!ceap-api/tmp/pids/.keep
+
+# Arquivos de configuração sensíveis
+ceap-api/config/master.key
+
+## Regras Específicas para o Frontend (ceap-front)
+
+# Node modules
+ceap-front/node_modules/
+
+# Dependências geradas
+ceap-front/build/
+
+## Registros e Diretórios Relacionados ao Docker e IDEs
+
+# Arquivo de override do Docker Compose (caso exista)
+docker-compose.override.yml
+
+# Arquivos e pastas de IDEs
+.idea/
+*.iml
+
+## Regras Globais (se aplicáveis em qualquer ponto do monorepo)
+
+# Ignore diretórios globais de logs e temporários, caso haja na raiz
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore arquivos de armazenamento, caso sejam gerados na raiz
+/storage/*
+!/storage/.keep
