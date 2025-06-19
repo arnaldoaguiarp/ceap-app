@@ -1,5 +1,4 @@
 plugins:
-  - rubocop-performance
   - rubocop-rspec
   - rubocop-rails
 
@@ -18,3 +17,8 @@ AllCops:
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
+
+Layout/FirstArgumentIndentation:
+  Enabled: false
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
