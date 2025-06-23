@@ -21,8 +21,8 @@ O projeto foi construído com foco em boas práticas de desenvolvimento, escalab
 A aplicação foi desenvolvida utilizando as seguintes tecnologias e ferramentas:
 
 * **Backend:**
-    * Ruby 3.2.2
-    * Ruby on Rails 7.1 (API mode)
+    * Ruby 3.4
+    * Ruby on Rails 7.2 (API mode)
     * Sidekiq (Processamento de Jobs em Background)
     * Puma (Application Server)
 * **Frontend:**
