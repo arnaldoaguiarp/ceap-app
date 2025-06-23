@@ -23,6 +23,8 @@ module CeapApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
 
+    config.active_job.queue_adapter = :sidekiq
+
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
@@ -40,5 +42,16 @@ module CeapApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # CORS configuration
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins 'localhost:5173' # Frontend URLs
+        resource '*',
+        headers: :any,
+        methods: [:get, :post, :put, :patch, :delete, :options, :head],
+        credentials: true
+      end
+    end
   end
 end
