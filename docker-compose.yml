@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password 
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+
+  backend:
+    build:
+      context: ./ceap-api
+      dockerfile: Dockerfile
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0"
+    volumes:
+      - ./ceap-api:/app 
+    ports:
+      - "3000:3000" 
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/postgres
+      REDIS_URL: redis://redis:6379/0
+
+  sidekiq:
+    build:
+      context: ./ceap-api
+      dockerfile: Dockerfile
+    command: bundle exec sidekiq
+    volumes:
+      - ./ceap-api:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/postgres
+      REDIS_URL: redis://redis:6379/0
+
+  frontend:
+    build:
+      context: ./ceap-front 
+      dockerfile: Dockerfile
+    volumes:
+      - ./ceap-front:/app
+      - /app/node_modules 
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data: 
