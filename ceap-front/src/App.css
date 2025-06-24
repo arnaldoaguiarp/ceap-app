@@ -40,3 +40,24 @@
 .read-the-docs {
   color: #888;
 }
+
+.deputy-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%; 
+  border: 2px solid var(--border-color);
+  background-color: #e9ecef;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.detail-photo {
+  width: 140px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px; 
+  border: 3px solid var(--border-color);
+  background-color: #e9ecef;
+  margin-right: 1.5rem;
+}

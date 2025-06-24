@@ -1,9 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  // Como estamos usando Docker Compose, podemos usar o nome do serviço 'backend'
-  // Se não estiver usando Docker para rodar, use 'http://localhost:3000'
-  baseURL: 'backend',
+
+  baseURL: 'http://localhost:3000/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
