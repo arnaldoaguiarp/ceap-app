@@ -7,17 +7,34 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test_and_lint:
+  test:
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./ceap-api
+
+    env:
+      RAILS_ENV: test
+      DATABASE_HOST: localhost
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      REDIS_URL: redis://localhost:6379/0
+
     services:
       postgres:
-        image: postgres:15
+        image: postgres:14
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
           POSTGRES_DB: ceap_api_test
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       redis:
         image: redis:7
         ports:
@@ -27,38 +44,23 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Configurar Ruby
+      - name: Configurar Ruby e Instalar Dependências
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version 
-          bundler-cache: true # Cache das gems para acelerar execuções futuras
-
-      - name: Configurar Variáveis de Ambiente
-        # Variáveis que o database.yml precisa
-        run: |
-          echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
-          echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
-          echo "POSTGRES_PASSWORD=password" >> $GITHUB_ENV
-          echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
-          echo "RAILS_ENV=test" >> $GITHUB_ENV
+          ruby-version: .ruby-version
+          bundler-cache: true
+          working-directory: ./ceap-api
 
       - name: Preparar o Banco de Dados de Teste
         run: |
-          cd ceap-api
           bundle exec rails db:create
           bundle exec rails db:schema:load
 
-      - name: Rodar o Linter (RuboCop)
-        run: |
-          cd ceap-api
-          bundle exec rubocop
+      - name: Rodar Linter (RuboCop)
+        run: bundle exec rubocop
 
       - name: Rodar Testes de Segurança (Brakeman)
-        run: |
-          cd ceap-api
-          bundle exec brakeman --no-pager
+        run: bundle exec brakeman --no-pager
 
       - name: Rodar a suíte de testes (RSpec)
-        run: |
-          cd ceap-api
-          bundle exec rspec
+        run: bundle exec rspec
