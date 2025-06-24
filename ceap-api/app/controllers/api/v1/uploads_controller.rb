@@ -3,7 +3,7 @@ class Api::V1::UploadsController < ApplicationController
     file = params[:file]
     state_uf = params[:state_uf]
 
-    if file.nil? || state_uf.blank?
+    if file.blank? || state_uf.blank?
       render json: { error: 'Arquivo e estado (state_uf) são obrigatórios' }, status: :bad_request
       return
     end
