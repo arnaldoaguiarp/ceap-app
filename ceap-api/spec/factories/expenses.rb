@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :expense do
-    deputy { nil }
-    issue_date { "2025-06-18" }
-    supplier { "MyString" }
-    net_value { "9.99" }
-    document_url { "MyString" }
-    expense_type { "MyString" }
+    association :deputy # Associa a uma factory de deputado automaticamente
+
+    issue_date { Faker::Date.between(from: 1.year.ago, to: Date.current) }
+    supplier { Faker::Company.name }
+    net_value { Faker::Number.decimal(l_digits: 4, r_digits: 2) }
+    document_url { Faker::Internet.url }
   end
 end

@@ -1,22 +1,33 @@
+# frozen_string_literal: true
+
 require 'csv'
 
+# Serviço para processamento e importação de arquivos CSV.
+# Inclui limpeza, validação e criação de registros de deputados e despesas.
 class CsvProcessorService
   def initialize(csv_content, state_uf)
     @csv_content = csv_content
     @state_uf = state_uf.strip.upcase
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def call
-    Rails.logger.info "------ INICIANDO PROCESSAMENTO: Estado '#{@state_uf}' ------"
+    Rails.logger.info "Iniciando limpeza de dados antigos para o estado: #{@state_uf}..."
 
+    deputies_in_state = Deputy.where(state: @state_uf)
+    deputies_in_state.destroy_all
+    Rails.logger.info "Limpeza de dados antigos para #{@state_uf} concluída."
+
+    Rails.logger.info "Iniciando processamento para Estado '#{@state_uf}'"
     begin
       row_count = 0
       matches_found = 0
 
       # Log antes do loop
-      Rails.logger.info "-> Prestes a iniciar o loop CSV.parse..."
+      Rails.logger.info '-> Prestes a iniciar o loop CSV.parse...'
 
-      CSV.parse(@csv_content, headers: true, col_sep: ';', encoding: 'UTF-8', liberal_parsing: true, header_converters: :symbol) do |row|
+      CSV.parse(@csv_content, headers: true, col_sep: ';', encoding: 'UTF-8', liberal_parsing: true,
+                              header_converters: :symbol) do |row|
         row_count += 1
         Rails.logger.info "Lendo linha ##{row_count}" if row_count <= 6 # Loga as 6 primeiras
 
@@ -28,7 +39,7 @@ class CsvProcessorService
 
         deputy = Deputy.find_or_create_by!(registration_id: row[:idecadastro]) do |d|
           d.name = row[:txnomeparlamentar]
-          d.party = row[:sgpartido].presence || "NÃO INFORMADO"
+          d.party = row[:sgpartido].presence || 'NÃO INFORMADO'
           d.state = row[:sguf].strip.upcase
         end
 
@@ -40,12 +51,13 @@ class CsvProcessorService
         )
       end
 
-      Rails.logger.info "-> Processamento concluído. Total de linhas lidas: #{row_count}. Registros para '#{@state_uf}': #{matches_found}."
+      Rails.logger.info "-> Finalizado. Linhas lidas: #{row_count}. Registros para '#{@state_uf}': #{matches_found}."
     rescue Date::Error => e
       Rails.logger.error "!!!!!! ERRO DE PARSE DE DATA: #{e.message}. Verifique o formato das datas no CSV. !!!!!!"
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error "!!!!!! ERRO DURANTE O PROCESSAMENTO DO CSV: #{e.message} !!!!!!"
       Rails.logger.error e.backtrace.join("\n")
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end

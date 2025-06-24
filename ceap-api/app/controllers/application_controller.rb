@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+# Controller base para todos os endpoints da API. Define respostas de erro.
 class ApplicationController < ActionController::API
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
+
   private
 
   def not_found(exception)

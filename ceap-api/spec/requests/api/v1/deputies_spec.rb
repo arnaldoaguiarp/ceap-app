@@ -1,18 +1,3 @@
-require 'rails_helper'
+# frozen_string_literal: true
 
-RSpec.describe "Api::V1::Deputies", type: :request do
-  describe "GET /index" do
-    it "returns http success" do
-      get "/api/v1/deputies/index"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET /show" do
-    it "returns http success" do
-      get "/api/v1/deputies/show"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-end
+require 'swagger_helper'

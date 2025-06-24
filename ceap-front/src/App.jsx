@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from './services/api';
 import FileUpload from './components/FileUpload';
 import DeputiesList from './components/DeputiesList';
 import DeputyDetail from './components/DeputyDetail';
-import DeputiesChart from './components/DeputiesChart'; // Importando o gráfico
-import './App.css'; // Vamos criar um CSS básico
+import DeputiesChart from './components/DeputiesChart';
+import './App.css';
 
 function App() {
   const [deputies, setDeputies] = useState([]);
@@ -12,26 +12,38 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   console.log('App renderizado. Número de deputados no estado:', deputies.length);
+  
+  // O `currentState` é a "fonte da verdade".
+  const [currentState, setCurrentState] = useState(
+    localStorage.getItem('lastStateUF') || 'CE'
+  );
 
-  // Função que busca os deputados na API
-  const fetchDeputies = async (state) => {
-    setIsLoading(true);
-    try {
-      // A chamada será para `http://localhost:3000/api/v1/deputies?state=CE` (ou o estado escolhido)
-      const response = await api.get(`/deputies?state=${state}`);
-      console.log('Dados recebidos da API:', response.data);
-      setDeputies(response.data);
-    } catch (error) {
-      console.error("Erro ao buscar deputados:", error);
-      setDeputies([]); // Limpa a lista em caso de erro
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // O useEffect observa a variável `currentState`.
+  // Será executado na primeira vez que o componente montar e
+  // quando o `currentState` for alterado via `setCurrentState`.
+  useEffect(() => {
+    const fetchDeputies = async () => {
+      // Não buscar se o estado for nulo/vazio.
+      if (!currentState) return; 
 
-  // Função de callback para ser chamada após o sucesso do upload
-  const handleUploadSuccess = (state) => {
-    fetchDeputies(state);
+      setIsLoading(true);
+      localStorage.setItem('lastStateUF', currentState); 
+      try {
+        const response = await api.get(`/deputies?state=${currentState}`);
+        setDeputies(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar deputados:", error);
+        setDeputies([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDeputies();
+  }, [currentState]); // `currentState` agora é uma dependência do efeito!
+
+  const handleUploadSuccess = (uploadedState) => {
+    setCurrentState(uploadedState);
   };
 
   const handleSelectDeputy = (deputy) => {
@@ -49,14 +61,12 @@ function App() {
       </header>
       <main>
         {!selectedDeputyId ? (
-          // Se nenhum deputado estiver selecionado, mostra a tela principal
           <>
             <FileUpload onUploadSuccess={handleUploadSuccess} />
             {deputies.length > 0 && <DeputiesChart deputiesData={deputies} />}
             <DeputiesList deputies={deputies} onSelectDeputy={handleSelectDeputy} isLoading={isLoading} />
           </>
         ) : (
-          // Se um deputado for selecionado, mostra apenas os detalhes
           <DeputyDetail deputyId={selectedDeputyId} onBack={handleBackToList} />
         )}
       </main>
