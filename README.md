@@ -12,7 +12,11 @@ O projeto foi construído com foco em boas práticas de desenvolvimento, escalab
 * **Upload de Arquivo CSV:** Interface para envio do arquivo de despesas (`Ano-2024.csv`).
 * **Processamento Assíncrono:** O processamento do arquivo CSV é realizado em segundo plano utilizando o **Sidekiq**, garantindo que a interface do usuário não seja bloqueada durante a importação de dados.
 * **API RESTful:** Backend em Rails que expõe endpoints para consulta dos dados processados.
+* **Ranking de Gastos:** Listagem dos deputados de um determinado estado, ordenados pelo total de gastos.
+* **Detalhamento de Despesas:** Visualização de todas as despesas de um deputado, com link para o documento original.
 * **Frontend Reativo:** Interface construída em React (Vite) para uma experiência de usuário fluida e moderna.
+* **Visualização de Dados (Bônus):** Gráfico de barras exibindo o "Top 10" deputados com maiores gastos.
+* **Documentação da API (Bônus):** Documentação interativa gerada com Rswag (Swagger), acessível via navegador.
 
 ---
 
@@ -31,7 +35,9 @@ A aplicação foi desenvolvida utilizando as seguintes tecnologias e ferramentas
 * **Banco de Dados & Cache:**
     * PostgreSQL 15
     * Redis 7
-* **Qualidade de Código:**
+* **Testes e Qualidade de Código:**
+    * RSpec (Testes de Backend)
+    * Rswag (Testes e Documentação de API)
     * RuboCop (Linter de Código)
 * **Infraestrutura & DevOps:**
     * Docker
@@ -50,7 +56,7 @@ A aplicação foi desenvolvida utilizando as seguintes tecnologias e ferramentas
 1.  **Clone o repositório:**
     ```bash
     git clone [URL-DO-SEU-REPOSITORIO]
-    cd nome-da-pasta-do-projeto
+    cd ceap-app
     ```
 
 2.  **Construa e suba os containers:**
@@ -68,6 +74,17 @@ A aplicação foi desenvolvida utilizando as seguintes tecnologias e ferramentas
 4.  **Acesse a aplicação!**
     * **Frontend:** Abra seu navegador e acesse `http://localhost:5173`
     * **UI do Sidekiq:** Monitore os jobs em `http://localhost:3000/sidekiq`
+    * **Documentação da API:** Explore os endpoints em `http://localhost:3000/api-docs`
+
+---
+
+## 🧪 Executando os Testes
+
+Para rodar a suíte de testes do backend (RSpec), execute o seguinte comando:
+
+```bash
+docker-compose exec backend bundle exec rspec
+```
 
 ---
 
@@ -89,8 +106,6 @@ Durante o desenvolvimento, algumas decisões foram tomadas para garantir a quali
 
 Se houvesse mais tempo para continuar o desenvolvimento, os próximos passos seriam:
 
-* **Testes e Documentação:** Implementação do RSwag para uma documentação completa do projeto e testes com o RSpec.
-* **Autenticação e Autorização:** Implementar um sistema de login para proteger o acesso à funcionalidade de upload.
 * **Filtros Avançados:** Adicionar mais filtros à API (ex: por data, por tipo de despesa, por partido).
 * **Paginação:** Implementar paginação nos endpoints que retornam listas longas (despesas de um deputado).
 * **Testes de Frontend:** Adicionar uma suíte de testes para os componentes React utilizando Jest e React Testing Library.
