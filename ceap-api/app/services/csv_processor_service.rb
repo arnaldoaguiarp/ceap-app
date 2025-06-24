@@ -7,14 +7,19 @@ class CsvProcessorService
   end
 
   def call
-    Rails.logger.info "------ INICIANDO PROCESSAMENTO: Estado '#{@state_uf}' ------"
+    Rails.logger.info "Iniciando limpeza de dados antigos para o estado: #{@state_uf}..."
 
+    deputies_in_state = Deputy.where(state: @state_uf)
+    deputies_in_state.destroy_all
+    Rails.logger.info "Limpeza de dados antigos para #{@state_uf} concluída."
+
+    Rails.logger.info "Iniciando processamento para Estado '#{@state_uf}'"
     begin
       row_count = 0
       matches_found = 0
 
       # Log antes do loop
-      Rails.logger.info "-> Prestes a iniciar o loop CSV.parse..."
+      Rails.logger.info '-> Prestes a iniciar o loop CSV.parse...'
 
       CSV.parse(@csv_content, headers: true, col_sep: ';', encoding: 'UTF-8', liberal_parsing: true, header_converters: :symbol) do |row|
         row_count += 1
