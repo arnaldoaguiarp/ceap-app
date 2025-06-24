@@ -361,8 +361,6 @@ DEPENDENCIES
   roo
   rspec-rails
   rswag
-  rswag-api
-  rswag-ui
   rubocop
   rubocop-rails
   rubocop-rspec

@@ -1,0 +1,166 @@
+---
+openapi: 3.0.1
+info:
+  title: API Ranking de Gastos de Deputados
+  version: v1
+  description: API para o Desafio Backend da Agenda Edu.
+paths:
+  "/api/v1/deputies":
+    get:
+      summary: Lista deputados de um estado com gastos
+      tags:
+      - Deputados
+      parameters:
+      - name: state
+        in: query
+        required: true
+        example: CE
+        schema:
+          type: string
+      responses:
+        '200':
+          description: sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    registration_id:
+                      type: string
+                    state:
+                      type: string
+                    party:
+                      type: string
+                    photo_url:
+                      type: string
+                      format: uri
+                    total_expenses:
+                      type: number
+                      format: float
+                      example: 1234.56
+  "/api/v1/deputies/{id}":
+    get:
+      summary: Detalha um deputado e suas despesas
+      tags:
+      - Deputados
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deputy:
+                    "$ref": "#/components/schemas/Deputy"
+                  total_expenses:
+                    type: string
+                    format: decimal
+                    example: '25461.83'
+                  highest_expense:
+                    "$ref": "#/components/schemas/Expense"
+                  expenses:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Expense"
+        '404':
+          description: não encontrado
+  "/api/v1/uploads":
+    post:
+      summary: Envia um arquivo CSV para processamento
+      tags:
+      - Uploads
+      parameters: []
+      responses:
+        '202':
+          description: aceito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Arquivo recebido. O processamento foi iniciado em segundo
+                      plano.
+        '400':
+          description: parâmetros faltando
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+        required: true
+        description: Arquivo CSV com as despesas.
+servers:
+- url: http://localhost:3000
+  description: Servidor de Desenvolvimento Local
+components:
+  schemas:
+    Deputy:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Deputado Teste
+        registration_id:
+          type: string
+          example: '123456'
+        state:
+          type: string
+          example: CE
+        party:
+          type: string
+          example: TESTE
+        photo_url:
+          type: string
+          format: uri
+          example: http://camara.leg.br/...
+      required:
+      - id
+      - name
+      - registration_id
+      - state
+      - party
+      - photo_url
+    Expense:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 101
+        issue_date:
+          type: string
+          format: date
+          example: '2024-06-24'
+        supplier:
+          type: string
+          example: Fornecedor XYZ
+        net_value:
+          type: string
+          format: decimal
+          example: '199.99'
+        document_url:
+          type: string
+          format: uri
+          example: http://camara.leg.br/...
+      required:
+      - id
+      - issue_date
+      - supplier
+      - net_value

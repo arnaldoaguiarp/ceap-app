@@ -21,8 +21,6 @@ gem "redis"
 
 # Documentation
 gem "rswag"
-gem "rswag-api"
-gem "rswag-ui"
 
 group :development, :test do
   gem "rspec-rails"
