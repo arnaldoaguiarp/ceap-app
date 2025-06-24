@@ -1,41 +1,43 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-ruby "3.4.4"
+source 'https://rubygems.org'
 
-gem "rails", "~> 7.2.2", ">= 7.2.2.1"
-gem "pg", "~> 1.1"
-gem "puma", "~> 6.4"
-gem "bootsnap", ">= 1.4.4", require: false
+ruby '3.4.4'
+
+gem 'bootsnap', '>= 1.4.4', require: false
+gem 'pg', '~> 1.1'
+gem 'puma', '~> 6.4'
+gem 'rails', '~> 7.2.2', '>= 7.2.2.1'
 
 # API gems
-gem "rack-cors"
-gem "jsonapi-serializer"
+gem 'jsonapi-serializer'
+gem 'rack-cors'
 
 # File processing
-gem "csv"
-gem "roo"
+gem 'csv'
+gem 'roo'
 
 # Background jobs
-gem "sidekiq"
-gem "redis"
+gem 'redis'
+gem 'sidekiq'
 
 # Documentation
-gem "rswag"
+gem 'rswag'
 
 group :development, :test do
-  gem "rspec-rails"
-  gem "factory_bot_rails"
-  gem "faker"
-  gem "shoulda-matchers"
-  gem "database_cleaner-active_record"
-  gem "simplecov", require: false
+  gem 'database_cleaner-active_record'
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'rspec-rails'
+  gem 'shoulda-matchers'
+  gem 'simplecov', require: false
 end
 
 group :development do
-  gem "listen", "~> 3.3"
-  gem "spring"
-  gem "rubocop", require: false
-  gem "rubocop-rails", require: false
-  gem "rubocop-rspec", require: false
-  gem "brakeman"
+  gem 'brakeman'
+  gem 'listen', '~> 3.3'
+  gem 'rubocop', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'spring'
 end

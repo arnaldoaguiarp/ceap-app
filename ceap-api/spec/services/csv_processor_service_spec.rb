@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe CsvProcessorService, type: :service do
@@ -20,8 +22,8 @@ RSpec.describe CsvProcessorService, type: :service do
   end
 
   describe '#call' do
-    context 'com dados válidos e para o estado correto' do
-      it 'cria os Deputados e as Despesas corretamente' do
+    context 'with valid data for the correct state' do
+      it 'creates Deputies and Expenses correctly' do
         service = described_class.new(valid_csv_content, 'CE')
 
         # Verifica se o número de Deputados e Despesas muda como esperado
@@ -29,33 +31,44 @@ RSpec.describe CsvProcessorService, type: :service do
                                .and change(Expense, :count).by(2)
       end
 
-      it 'limpa os dados antigos do mesmo estado antes de importar' do
-        # Cria um deputado antigo no estado 'CE'
+      it 'creates a new deputy' do
         create(:deputy, state: 'CE', name: 'Deputado Antigo')
-        expect(Deputy.where(state: 'CE').count).to eq(1)
+        service = described_class.new(valid_csv_content, 'CE')
+        service.call
+        expect(Deputy.where(state: 'CE').count).to eq(2)
+      end
 
+      it 'removes the old deputy' do
+        create(:deputy, state: 'CE', name: 'Deputado Antigo')
+        service = described_class.new(valid_csv_content, 'CE')
+        service.call
+        expect(Deputy.find_by(name: 'Deputado Antigo')).to be_nil
+      end
+
+      it 'creates the correct number of new deputies' do
         service = described_class.new(valid_csv_content, 'CE')
         service.call
 
-        # Verifica se o deputado antigo foi removido e os novos criados
-        expect(Deputy.find_by(name: 'Deputado Antigo')).to be_nil
         expect(Deputy.where(state: 'CE').count).to eq(2)
       end
     end
 
-    context 'com dados inválidos' do
-      it 'ignora linhas que não pertencem ao estado' do
+    context 'with invalid data' do
+      it 'ignores lines that do not belong to the state' do
         service = described_class.new(valid_csv_content, 'SP')
         # Espera que apenas o Deputado B (de SP) e sua despesa sejam criados
         expect { service.call }.to change(Deputy, :count).by(1)
                                .and change(Expense, :count).by(1)
       end
 
-      it 'ignora linhas com dados essenciais faltando' do
+      it 'ignores lines with missing essential data and does not create new deputies' do
         service = described_class.new(csv_with_invalid_rows, 'CE')
-        # no CSV de exemplo têm problemas (nome/data faltando).
-        expect { service.call }.to change(Deputy, :count).by(0)
-                               .and change(Expense, :count).by(0)
+        expect { service.call }.not_to change(Deputy, :count)
+      end
+
+      it 'ignores lines with missing essential data and does not create new expenses' do
+        service = described_class.new(csv_with_invalid_rows, 'CE')
+        expect { service.call }.not_to change(Expense, :count)
       end
     end
   end

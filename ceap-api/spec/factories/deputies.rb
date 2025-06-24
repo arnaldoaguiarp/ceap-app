@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :deputy do
     name { Faker::Name.name }
@@ -8,7 +10,7 @@ FactoryBot.define do
     # "trait": conjunto de atributos que podemos adicionar opcionalmente.
     # Permite criar `create(:deputy_with_expenses)` nos testes.
     trait :with_expenses do
-      after(:create) do |deputy, evaluator|
+      after(:create) do |deputy, _evaluator|
         create_list(:expense, 5, deputy: deputy)
       end
     end

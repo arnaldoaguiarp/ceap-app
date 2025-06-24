@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/swagger_helper.rb
 require 'rails_helper'
 
@@ -19,7 +21,7 @@ RSpec.configure do |config|
           description: 'Servidor de Desenvolvimento Local'
         }
       ],
-      # Definição central dos schemas reutilizáveis 
+      # Definição central dos schemas reutilizáveis
       components: {
         schemas: {
 

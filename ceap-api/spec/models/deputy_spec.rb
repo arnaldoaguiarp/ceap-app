@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Deputy, type: :model do
   # Criar uma instância do modelo para os testes
   subject(:deputy) { build(:deputy) }
 
-  describe 'validações' do
+  describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:registration_id) }
     it { is_expected.to validate_uniqueness_of(:registration_id).case_insensitive }
@@ -12,29 +14,32 @@ RSpec.describe Deputy, type: :model do
     it { is_expected.to validate_presence_of(:party) }
   end
 
-  describe 'associação' do
+  describe 'association' do
     it { is_expected.to have_many(:expenses).dependent(:destroy) }
   end
 
-  describe 'escopos (scopes)' do
+  describe 'scopes' do
     # Escopo `.by_state` funciona como esperado
-    context '.by_state' do
+    describe '.by_state' do
       let!(:deputy_in_ce) { create(:deputy, state: 'CE') }
       let!(:deputy_in_sp) { create(:deputy, state: 'SP') }
 
-      it 'retorna apenas os deputados do estado especificado' do
-        result = Deputy.by_state('CE')
-
+      it 'includes deputies from the specified state' do
+        result = described_class.by_state('CE')
         expect(result).to include(deputy_in_ce)
+      end
+
+      it 'excludes deputies from other states' do
+        result = described_class.by_state('CE')
         expect(result).not_to include(deputy_in_sp)
       end
     end
   end
 
-  describe 'métodos de instância' do
+  describe 'instance methods' do
     # Testa a lógica dos métodos do modelo
-    context '#total_expenses' do
-      it 'retorna a soma correta dos valores líquidos das despesas' do
+    describe '#total_expenses' do
+      it 'returns the correct sum of the net values of the expenses' do
         deputy = create(:deputy)
         create(:expense, deputy: deputy, net_value: 100.00)
         create(:expense, deputy: deputy, net_value: 50.50)
@@ -44,10 +49,10 @@ RSpec.describe Deputy, type: :model do
       end
     end
 
-    context '#photo_url' do
-      it 'retorna a URL correta da foto baseada no registration_id' do
-        deputy = build(:deputy, registration_id: 98765)
-        expected_url = "http://www.camara.leg.br/internet/deputado/bandep/98765.jpg"
+    describe '#photo_url' do
+      it 'returns the correct URL of the photo based on the registration_id' do
+        deputy = build(:deputy, registration_id: 98_765)
+        expected_url = 'http://www.camara.leg.br/internet/deputado/bandep/98765.jpg'
 
         expect(deputy.photo_url).to eq(expected_url)
       end
