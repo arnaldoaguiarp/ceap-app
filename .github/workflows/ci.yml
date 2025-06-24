@@ -1,47 +1,64 @@
-name: CI
+name: Rails CI
 
 on:
-  pull_request:
   push:
-    branches: [ main ]
+    branches: [ "main", "improvements" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  scan_ruby:
+  test_and_lint:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: ceap_api_test
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
     steps:
-      - name: Checkout code
+      - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Set up Ruby
+      - name: Configurar Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
-          bundler-cache: true
+          ruby-version: .ruby-version 
+          bundler-cache: true # Cache das gems para acelerar execuções futuras
 
-      - name: Install dependencies
-        run: bundle install
-        working-directory: ceap-api
+      - name: Configurar Variáveis de Ambiente
+        # Variáveis que o database.yml precisa
+        run: |
+          echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
+          echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=password" >> $GITHUB_ENV
+          echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
+          echo "RAILS_ENV=test" >> $GITHUB_ENV
 
-      - name: Scan for Rails security vulnerabilities with Brakeman
-        working-directory: ceap-api
-        run: bin/brakeman --no-pager
+      - name: Preparar o Banco de Dados de Teste
+        run: |
+          cd ceap-api
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Rodar o Linter (RuboCop)
+        run: |
+          cd ceap-api
+          bundle exec rubocop
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
+      - name: Rodar Testes de Segurança (Brakeman)
+        run: |
+          cd ceap-api
+          bundle exec brakeman --no-pager
 
-      - name: Install dependencies
-        run: bundle install
-        working-directory: ceap-api
-
-      - name: Lint Rails code with RuboCop
-        working-directory: ceap-api
-        run: bin/rubocop -f github
+      - name: Rodar a suíte de testes (RSpec)
+        run: |
+          cd ceap-api
+          bundle exec rspec

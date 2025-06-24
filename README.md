@@ -115,7 +115,7 @@ Se houvesse mais tempo para continuar o desenvolvimento, os próximos passos ser
 
 ## 👨‍💻 Autor
 
-**[Arnaldo Aguiar]**
+**Arnaldo Aguiar**
 
 * **Email:** [arnaldoaguiarp@gmail.com](mailto:arnaldoaguiarp@gmail.com)
 * **LinkedIn:** [https://www.linkedin.com/in/arnaldoaguiarp/](https://www.linkedin.com/in/arnaldoaguiarp/)
