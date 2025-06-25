@@ -16,7 +16,7 @@ module Api
         deputies_json = @deputies.map do |deputy|
           deputy.as_json.merge(
             photo_url: deputy.photo_url,
-            total_expenses: deputy.total_expenses_sum || 0
+            total_expenses: format('%.2f', deputy.total_expenses_sum || 0)
           )
         end
 
