@@ -7,6 +7,20 @@ O projeto foi construído com foco em boas práticas de desenvolvimento, escalab
 
 ---
 
+## 🏗️ Arquitetura da Solução
+
+A aplicação foi projetada com uma arquitetura de serviços desacoplada, conteinerizada com Docker. A separação entre a API principal e o processamento de jobs em segundo plano (Sidekiq) garante que a aplicação seja responsiva e escalável.
+
+![Arquitetura Lógica da Aplicação](./docs/images/architecture.svg)
+
+### 🧠 Fluxo de Importação Assíncrona de CSV
+
+Para garantir uma experiência de usuário fluida, o processamento do arquivo CSV ocorre em segundo plano. O diagrama de sequência abaixo ilustra a comunicação assíncrona entre o frontend, a API e o worker Sidekiq.
+
+![Fluxo de Importação de CSV](./docs/images/import_sequence.png)
+
+---
+
 ## ✨ Features
 
 * **Upload de Arquivo CSV:** Interface para envio do arquivo de despesas (`Ano-2024.csv`).
@@ -55,7 +69,7 @@ A aplicação foi desenvolvida utilizando as seguintes tecnologias e ferramentas
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [URL-DO-SEU-REPOSITORIO]
+    git clone https://github.com/arnaldoaguiarp/ceap-app.git
     cd ceap-app
     ```
 
