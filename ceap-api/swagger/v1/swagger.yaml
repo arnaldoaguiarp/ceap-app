@@ -23,27 +23,37 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    registration_id:
-                      type: string
-                    state:
-                      type: string
-                    party:
-                      type: string
-                    photo_url:
-                      type: string
-                      format: uri
-                    total_expenses:
-                      type: number
-                      format: float
-                      example: 1234.56
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                          example: deputy
+                        attributes:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            registration_id:
+                              type: string
+                            state:
+                              type: string
+                            party:
+                              type: string
+                            photo_url:
+                              type: string
+                              format: uri
+                            total_expenses:
+                              type: string
+                              format: decimal
   "/api/v1/deputies/{id}":
     get:
       summary: Detalha um deputado e suas despesas
@@ -63,15 +73,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  deputy:
+                  data:
                     "$ref": "#/components/schemas/Deputy"
-                  total_expenses:
-                    type: string
-                    format: decimal
-                    example: '25461.83'
-                  highest_expense:
-                    "$ref": "#/components/schemas/Expense"
-                  expenses:
+                  included:
                     type: array
                     items:
                       "$ref": "#/components/schemas/Expense"
@@ -113,54 +117,85 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          example: 1
-        name:
           type: string
-          example: Deputado Teste
-        registration_id:
+          example: '1'
+        type:
           type: string
-          example: '123456'
-        state:
-          type: string
-          example: CE
-        party:
-          type: string
-          example: TESTE
-        photo_url:
-          type: string
-          format: uri
-          example: http://camara.leg.br/...
+          example: deputy
+        attributes:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: Deputado Teste
+            registration_id:
+              type: string
+              example: '123456'
+            state:
+              type: string
+              example: CE
+            party:
+              type: string
+              example: TESTE
+            photo_url:
+              type: string
+              format: uri
+              example: http://camara.leg.br/...
+            total_expenses:
+              type: string
+              format: decimal
+              example: '1500.75'
+          required:
+          - id
+          - name
+          - registration_id
+          - state
+          - party
+          - photo_url
+          - total_expenses
       required:
       - id
-      - name
-      - registration_id
-      - state
-      - party
-      - photo_url
+      - type
+      - attributes
     Expense:
       type: object
       properties:
         id:
-          type: integer
-          example: 101
-        issue_date:
           type: string
-          format: date
-          example: '2024-06-24'
-        supplier:
+          example: '101'
+        type:
           type: string
-          example: Fornecedor XYZ
-        net_value:
-          type: string
-          format: decimal
-          example: '199.99'
-        document_url:
-          type: string
-          format: uri
-          example: http://camara.leg.br/...
+          example: expense
+        attributes:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 101
+            issue_date:
+              type: string
+              format: date
+              example: '2024-06-25'
+            supplier:
+              type: string
+              example: Fornecedor XYZ
+            net_value:
+              type: string
+              format: decimal
+              example: '199.99'
+            document_url:
+              type: string
+              format: uri
+              example: http://camara.leg.br/...
+          required:
+          - id
+          - issue_date
+          - supplier
+          - net_value
       required:
       - id
-      - issue_date
-      - supplier
-      - net_value
+      - type
+      - attributes
