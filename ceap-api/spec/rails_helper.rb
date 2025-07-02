@@ -18,7 +18,22 @@ end
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
+
+  config.before(:suite) do
+    DatabaseCleaner.allow_remote_database_url = true
+    # Limpa o banco de dados completamente UMA VEZ antes de TODOS os testes rodarem.
+    DatabaseCleaner.clean_with(:truncation)
+    # Define a estratégia padrão para os testes como 'transaction', que é a mais rápida.
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.around do |example|
+    # Para cada teste ('it'), executa a limpeza.
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
 end
