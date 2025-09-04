@@ -184,7 +184,7 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (6.6.0)
+    puma (7.0.0)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.1.16)
@@ -354,7 +354,7 @@ DEPENDENCIES
   jsonapi-serializer
   listen (~> 3.3)
   pg (~> 1.1)
-  puma (~> 6.4)
+  puma (~> 7.0)
   rack-cors
   rails (~> 7.2.2, >= 7.2.2.1)
   redis
